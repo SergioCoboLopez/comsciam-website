@@ -6,7 +6,7 @@ name: ComSCIAM
 
 # Palette name. Must match a block in assets/css/palettes.css.
 # Choices shipped with the prototype: comsciam, urv, sea
-palette: comsciam
+palette: urv
 
 # Used for the language-alternate links. Navigation itself uses relative links,
 # so the pages work on your computer and on GitHub Pages.

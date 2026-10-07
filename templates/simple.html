@@ -1,0 +1,14 @@
+{# Plain text page for a future section: a heading, an introduction, and optional subsections. #}
+{% extends "base.html" %}
+{% block main %}
+<h1>{{ content.heading }}</h1>
+<div class="prose">
+  {{ content.intro | paragraphs }}
+</div>
+{% for section in content.sections | default([]) %}
+<section class="subsection">
+  <h2>{{ section.title }}</h2>
+  {{ section.text | paragraphs }}
+</section>
+{% endfor %}
+{% endblock %}

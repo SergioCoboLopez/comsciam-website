@@ -1,0 +1,22 @@
+# English researchers. Keep the same id, in the same order, as in ca/ and es/.
+
+title: Researchers
+meta_description: Members of the ComSCIAM group. Placeholder content.
+heading: Researchers
+intro: |
+  Placeholder list of group members. The name can stay the same in all three languages; the role and biography are translated.
+people:
+  - id: persona-1
+    name: Nom Cognom
+    role: Principal investigator
+    email: persona.1@urv.cat
+    photo: assets/images/person.svg
+    bio: |
+      Placeholder biography. Background, research interests, and affiliation.
+  - id: persona-2
+    name: Nom Cognom
+    role: Researcher
+    email: persona.2@urv.cat
+    photo: assets/images/person.svg
+    bio: |
+      Second placeholder biography, so the page shows more than one person.

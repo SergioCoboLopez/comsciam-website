@@ -1,0 +1,23 @@
+# Catalan publications page. Keep the same id, in the same order, in every language.
+# A paper title often stays in the language of the article. Put the newest item first.
+# Do not end authors, title, or venue with a period. The template adds punctuation.
+
+title: Publicacions
+meta_description: Publicacions del grup ComSCIAM. Contingut provisional.
+heading: Publicacions
+intro: |
+  Llista provisional. L'ordre dels elements és l'ordre en què es mostren; els articles nous van al principi.
+items:
+  - id: exemple-2026
+    title: Títol provisional d'un article
+    authors: Cognom, A.; Cognom, B
+    year: 2026
+    venue: Revista d'exemple
+    url: https://example.com
+    doi: "10.0000/example"
+  - id: exemple-2024
+    title: Títol provisional d'un capítol
+    authors: Cognom, C
+    year: 2024
+    venue: Editorial d'exemple
+    url: https://example.com

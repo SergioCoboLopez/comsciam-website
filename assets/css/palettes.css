@@ -1,0 +1,55 @@
+/* Color sets. Pick one with the palette field in site.yaml.
+   To add a palette, copy a block, rename data-palette, and add the name
+   to PALETTES in build.py. */
+
+:root,
+[data-palette="comsciam"] {
+  --color-accent: #0e6b6b;
+  --color-accent-dark: #0a4a4a;
+  --color-bg: #ffffff;
+  --color-text: #1c1c1c;
+  --color-muted: #5c6565;
+  --color-link: #0c5c5c;
+  --color-nav-text: #1c1c1c;
+  --color-nav-active: #0e6b6b;
+  --color-line: #d5d5d5;
+  --color-mark: #0e6b6b;
+  --color-topbar: #0e6b6b;
+  --color-footer-bg: #143838;
+  --color-footer-text: #e7f1f1;
+  --color-surface: #f3f6f6;
+}
+
+[data-palette="urv"] {
+  --color-accent: #c8102e;
+  --color-accent-dark: #8e0b20;
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #5a5a5a;
+  --color-link: #a10d24;
+  --color-nav-text: #1a1a1a;
+  --color-nav-active: #c8102e;
+  --color-line: #d5d5d5;
+  --color-mark: #c8102e;
+  --color-topbar: #c8102e;
+  --color-footer-bg: #1a1a1a;
+  --color-footer-text: #f3f3f3;
+  --color-surface: #f6f6f6;
+}
+
+[data-palette="sea"] {
+  --color-accent: #1d4e89;
+  --color-accent-dark: #163e6c;
+  --color-bg: #ffffff;
+  --color-text: #1c2430;
+  --color-muted: #5c6775;
+  --color-link: #1d4e89;
+  --color-nav-text: #1c2430;
+  --color-nav-active: #1d4e89;
+  --color-line: #d5d5d5;
+  --color-mark: #1d4e89;
+  --color-topbar: #1d4e89;
+  --color-footer-bg: #163e6c;
+  --color-footer-text: #e8eef6;
+  --color-surface: #f3f6fa;
+}

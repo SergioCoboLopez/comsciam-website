@@ -1,0 +1,18 @@
+# English text of the home page.
+
+title: Home
+meta_description: Placeholder homepage of the ComSCIAM research group.
+heading: ComSCIAM
+tagline: Research group at Universitat Rovira i Virgili
+intro: |
+  This text is a placeholder. Use a few sentences to say what the group studies, which faculty it belongs to, and why the work matters.
+
+  A blank line starts a new paragraph. The page layout stays the same.
+areas_heading: Research lines
+areas:
+  - title: First research line
+    text: Short placeholder description. Replace it with a real line of work.
+  - title: Second research line
+    text: Each item in this list is one block. Adding an item adds a block to the page.
+  - title: Third research line
+    text: Removing an item removes that block from the site, without editing the layout.

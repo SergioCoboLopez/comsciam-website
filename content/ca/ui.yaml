@@ -1,0 +1,18 @@
+# Interface words for Catalan. Visible sentences of each page are in the other files.
+
+skip: Ves al contingut
+language_label: Idioma
+menu_label: Seccions
+full_name: Nom complet del grup (text provisional)
+logo_university_alt: Universitat Rovira i Virgili
+menu:
+  home: Inici
+  researchers: Investigadors
+  publications: Publicacions
+address:
+  - Universitat Rovira i Virgili
+  - Adreça provisional
+  - Ciutat
+footer:
+  contact: Contacte
+  university: Universitat

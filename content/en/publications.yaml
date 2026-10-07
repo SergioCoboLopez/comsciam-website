@@ -1,0 +1,21 @@
+# English publications page. Keep the same id, in the same order, in every language.
+
+title: Publications
+meta_description: Publications of the ComSCIAM group. Placeholder content.
+heading: Publications
+intro: |
+  Placeholder list. Items appear in the order written here, so put new papers at the top.
+items:
+  - id: exemple-2026
+    title: Placeholder title of a paper
+    authors: Cognom, A.; Cognom, B
+    year: 2026
+    venue: Example journal
+    url: https://example.com
+    doi: "10.0000/example"
+  - id: exemple-2024
+    title: Placeholder title of a chapter
+    authors: Cognom, C
+    year: 2024
+    venue: Example publisher
+    url: https://example.com

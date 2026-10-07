@@ -1,0 +1,22 @@
+# Investigadores en español. Mantén el mismo id, en el mismo orden, que en ca/ y en/.
+
+title: Investigadores
+meta_description: Miembros del grupo ComSCIAM. Contenido provisional.
+heading: Investigadores
+intro: |
+  Lista provisional de miembros. El nombre puede repetirse en los tres idiomas; el cargo y la biografía se traducen.
+people:
+  - id: persona-1
+    name: Nom Cognom
+    role: Investigador principal
+    email: persona.1@urv.cat
+    photo: assets/images/person.svg
+    bio: |
+      Biografía provisional. Trayectoria, intereses de investigación y afiliación.
+  - id: persona-2
+    name: Nom Cognom
+    role: Investigadora
+    email: persona.2@urv.cat
+    photo: assets/images/person.svg
+    bio: |
+      Segunda biografía provisional, para ver cómo queda más de una persona.

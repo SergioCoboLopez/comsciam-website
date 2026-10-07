@@ -1,0 +1,18 @@
+# Palabras de interfaz en español.
+
+skip: Ir al contenido
+language_label: Idioma
+menu_label: Secciones
+full_name: Nombre completo del grupo (texto provisional)
+logo_university_alt: Universitat Rovira i Virgili
+menu:
+  home: Inicio
+  researchers: Investigadores
+  publications: Publicaciones
+address:
+  - Universitat Rovira i Virgili
+  - Dirección provisional
+  - Ciudad
+footer:
+  contact: Contacto
+  university: Universidad

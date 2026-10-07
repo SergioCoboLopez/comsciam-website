@@ -1,0 +1,83 @@
+{# Skeleton of every page: header, menu, footer.
+   Change words in content/<language>/ui.yaml.
+   Change colors in assets/css/palettes.css and the palette field of site.yaml. #}
+<!DOCTYPE html>
+<html lang="{{ lang.locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ content.title }} · {{ site.name }}</title>
+  <meta name="description" content="{{ content.meta_description }}">
+  <link rel="icon" href="{{ asset(site.logos.group) }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ asset('assets/css/palettes.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/site.css') }}">
+  {% for alt in alternates %}
+  <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ alt.url }}">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ default_url }}">
+</head>
+<body data-palette="{{ site.palette }}">
+  <a class="skip" href="#content">{{ ui.skip }}</a>
+  <div class="topbar"></div>
+  <header class="site-header">
+    <div class="wrap utility">
+      <a class="university-link" href="https://www.urv.cat/">
+        <img src="{{ asset(site.logos.university) }}" alt="{{ ui.logo_university_alt }}" height="48">
+      </a>
+      <nav aria-label="{{ ui.language_label }}">
+        <ul class="lang-switch">
+          {% for alt in alternates %}
+          <li>
+            <a href="{{ alt.href }}" hreflang="{{ alt.locale }}" {% if alt.id == lang.id %}aria-current="true"{% endif %}>{{ alt.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap identity">
+      <img class="logo-group" src="{{ asset(site.logos.group) }}" alt="" width="72" height="72">
+      <div>
+        <p class="group-name">{{ site.name }}</p>
+        <p class="group-full">{{ ui.full_name }}</p>
+      </div>
+    </div>
+    <nav class="site-nav" aria-label="{{ ui.menu_label }}">
+      <div class="wrap">
+        <ul>
+          {% for item in nav %}
+          <li>
+            <a href="{{ item.href }}" {% if item.id == page.id %}aria-current="page"{% endif %}>{{ item.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main id="content" class="wrap">
+    {% block main %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <section>
+        <h2>{{ site.name }}</h2>
+        <p>{{ ui.full_name }}</p>
+      </section>
+      <section>
+        <h2>{{ ui.footer.contact }}</h2>
+        <address>
+          {% for line in ui.address %}
+          {{ line }}<br>
+          {% endfor %}
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a><br>
+          {{ site.phone }}
+        </address>
+      </section>
+      <section>
+        <h2>{{ ui.footer.university }}</h2>
+        <p><a href="https://www.urv.cat/">Universitat Rovira i Virgili</a></p>
+      </section>
+    </div>
+    <p class="legal wrap">© {{ year }} {{ site.name }}</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{# Publications. One list item in the YAML file becomes one reference. #}
+{% extends "base.html" %}
+{% block main %}
+<h1>{{ content.heading }}</h1>
+<div class="prose">
+  {{ content.intro | paragraphs }}
+</div>
+<ol class="bibliography">
+  {% for item in content["items"] %}
+  <li id="{{ item.id }}">
+    <span class="year">{{ item.year }}</span>
+    {{ item.authors }}.
+    {% if item.url %}
+    <a href="{{ item.url }}">{{ item.title }}</a>.
+    {% else %}
+    {{ item.title }}.
+    {% endif %}
+    <span class="venue">{{ item.venue }}</span>.
+    {% if item.doi %}
+    <a href="https://doi.org/{{ item.doi }}">doi:{{ item.doi }}</a>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ol>
+{% endblock %}

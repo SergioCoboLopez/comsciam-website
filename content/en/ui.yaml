@@ -1,0 +1,18 @@
+# Interface words for English.
+
+skip: Skip to content
+language_label: Language
+menu_label: Sections
+full_name: Full name of the group (placeholder)
+logo_university_alt: Universitat Rovira i Virgili
+menu:
+  home: Home
+  researchers: Researchers
+  publications: Publications
+address:
+  - Universitat Rovira i Virgili
+  - Address placeholder
+  - City
+footer:
+  contact: Contact
+  university: University

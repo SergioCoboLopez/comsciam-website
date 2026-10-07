@@ -1,0 +1,52 @@
+# Site-wide settings. Words that change by language live in content/<language>/.
+# The first language is the default: its pages have no language prefix in the URL.
+# Catalan is therefore https://…/  English is https://…/en/  Spanish is https://…/es/
+
+name: ComSCIAM
+
+# Palette name. Must match a block in assets/css/palettes.css.
+# Choices shipped with the prototype: comsciam, urv, sea
+palette: comsciam
+
+# Used for the language-alternate links. Navigation itself uses relative links,
+# so the pages work on your computer and on GitHub Pages.
+url: https://sergiocobolopez.github.io/comsciam-website
+
+email: comsciam@example.com
+phone: "+34 000 000 000"
+
+logos:
+  group: assets/logos/comsciam.svg
+  university: assets/logos/urv.svg
+
+languages:
+  - id: ca
+    label: Català
+    locale: ca
+  - id: en
+    label: English
+    locale: en
+  - id: es
+    label: Español
+    locale: es
+
+# Each entry is one section of the site.
+# id:     content file name (content/ca/home.yaml) and menu key
+# path:   piece of the URL. Empty path means the language home page.
+# layout: file in templates/
+pages:
+  - id: home
+    path: ""
+    layout: home.html
+  - id: researchers
+    path: researchers
+    layout: researchers.html
+  - id: publications
+    path: publications
+    layout: publications.html
+
+  # A later text section only needs a block like this, plus one YAML file
+  # per language (title, meta_description, heading, intro, optional sections):
+  # - id: contact
+  #   path: contact
+  #   layout: simple.html

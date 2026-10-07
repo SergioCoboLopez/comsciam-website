@@ -1,0 +1,21 @@
+{# Researchers. One list item in the YAML file becomes one person. #}
+{% extends "base.html" %}
+{% block main %}
+<h1>{{ content.heading }}</h1>
+<div class="prose">
+  {{ content.intro | paragraphs }}
+</div>
+<ul class="people">
+  {% for person in content.people %}
+  <li class="person" id="{{ person.id }}">
+    <img src="{{ asset(person.photo) }}" alt="" width="96" height="96">
+    <div>
+      <h2>{{ person.name }}</h2>
+      <p class="role">{{ person.role }}</p>
+      <p><a href="mailto:{{ person.email }}">{{ person.email }}</a></p>
+      {{ person.bio | paragraphs }}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

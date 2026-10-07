@@ -1,0 +1,21 @@
+# Publicaciones en español. Mantén el mismo id, en el mismo orden, en cada idioma.
+
+title: Publicaciones
+meta_description: Publicaciones del grupo ComSCIAM. Contenido provisional.
+heading: Publicaciones
+intro: |
+  Lista provisional. El orden de los elementos es el orden en que se muestran; los artículos nuevos van al principio.
+items:
+  - id: exemple-2026
+    title: Título provisional de un artículo
+    authors: Cognom, A.; Cognom, B
+    year: 2026
+    venue: Revista de ejemplo
+    url: https://example.com
+    doi: "10.0000/example"
+  - id: exemple-2024
+    title: Título provisional de un capítulo
+    authors: Cognom, C
+    year: 2024
+    venue: Editorial de ejemplo
+    url: https://example.com

@@ -1,0 +1,18 @@
+# Catalan text of the home page.
+
+title: Inici
+meta_description: Pàgina provisional del grup de recerca ComSCIAM.
+heading: ComSCIAM
+tagline: Grup de recerca de la Universitat Rovira i Virgili
+intro: |
+  Aquest text és provisional. Presenta el grup en unes poques frases: què estudia, a quina facultat s'adscriu i per què importa.
+
+  Un paràgraf nou comença després d'una línia en blanc. El disseny de la pàgina no canvia.
+areas_heading: Línies de recerca
+areas:
+  - title: Primera línia de recerca
+    text: Descripció breu i provisional. Substitueix-la per una línia real del grup.
+  - title: Segona línia de recerca
+    text: Cada element d'aquesta llista és un apartat. Afegir-ne un fa aparèixer un bloc nou a la pàgina.
+  - title: Tercera línia de recerca
+    text: Esborrar un element treu aquest apartat de la web, sense tocar el disseny.

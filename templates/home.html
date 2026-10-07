@@ -1,0 +1,20 @@
+{# Home. The words come from content/<language>/home.yaml. #}
+{% extends "base.html" %}
+{% block main %}
+<h1>{{ content.heading }}</h1>
+<p class="lede">{{ content.tagline }}</p>
+<div class="prose">
+  {{ content.intro | paragraphs }}
+</div>
+<h2>{{ content.areas_heading }}</h2>
+<ul class="area-list">
+  {% for area in content.areas %}
+  <li>
+    <div>
+      <h3>{{ area.title }}</h3>
+      <p>{{ area.text }}</p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

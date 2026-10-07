@@ -1,0 +1,322 @@
+/* Layout. Colors come from palettes.css, so this file rarely needs a hex code. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--color-link);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  background: var(--color-accent);
+  color: #fff;
+  padding: 0.4rem 0.7rem;
+  z-index: 2;
+}
+
+.skip:focus {
+  top: 0.5rem;
+}
+
+.wrap {
+  width: min(70rem, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.topbar {
+  height: 4px;
+  background: var(--color-topbar);
+}
+
+.site-header {
+  background: #fff;
+}
+
+.utility {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.75rem;
+}
+
+.university-link {
+  display: flex;
+  align-items: center;
+}
+
+.university-link img {
+  height: 48px;
+  width: auto;
+}
+
+.lang-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lang-switch li + li::before {
+  content: "·";
+  margin: 0 0.55rem;
+  color: var(--color-muted);
+}
+
+.lang-switch a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.lang-switch a[aria-current="true"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.1rem;
+}
+
+.logo-group {
+  width: 72px;
+  height: 72px;
+}
+
+.group-name {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.group-full {
+  margin: 0.15rem 0 0;
+  color: var(--color-muted);
+}
+
+.site-nav {
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav a {
+  display: inline-block;
+  padding: 0.85rem 0;
+  color: var(--color-nav-text);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.92rem;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--color-nav-active);
+  box-shadow: inset 0 -3px 0 var(--color-nav-active);
+}
+
+main h1 {
+  margin: 2rem 0 0.4rem;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+main h2 {
+  margin: 2rem 0 0.6rem;
+  font-size: 1.35rem;
+}
+
+.lede {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--color-muted);
+  font-size: 1.15rem;
+}
+
+.prose {
+  max-width: 40rem;
+}
+
+.prose p,
+.person p,
+.subsection p {
+  margin: 0.7rem 0;
+}
+
+.area-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 42rem;
+}
+
+.area-list li {
+  display: grid;
+  grid-template-columns: 0.75rem 1fr;
+  column-gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.area-list li::before {
+  content: "";
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: 0.35rem;
+  background: var(--color-mark);
+}
+
+.area-list h3,
+.area-list p {
+  margin: 0;
+}
+
+.area-list h3 {
+  font-size: 1.05rem;
+}
+
+.area-list p {
+  margin-top: 0.2rem;
+}
+
+.people {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.person {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.person img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  background: var(--color-surface);
+}
+
+.person h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.role {
+  margin: 0.15rem 0 0;
+  color: var(--color-muted);
+}
+
+.bibliography {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  max-width: 42rem;
+}
+
+.bibliography li {
+  margin: 0 0 1.1rem;
+}
+
+.bibliography .year {
+  font-weight: 700;
+  color: var(--color-accent-dark);
+  margin-right: 0.35rem;
+}
+
+.venue {
+  font-style: italic;
+}
+
+.site-footer {
+  margin-top: 3rem;
+  padding: 2rem 0 1.25rem;
+  background: var(--color-footer-bg);
+  color: var(--color-footer-text);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem 2rem;
+}
+
+.site-footer h2 {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.site-footer p,
+.site-footer address {
+  margin: 0;
+  font-style: normal;
+}
+
+.site-footer a {
+  color: var(--color-footer-text);
+}
+
+.legal {
+  margin: 1.75rem auto 0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .utility,
+  .identity {
+    align-items: flex-start;
+  }
+
+  .person,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}

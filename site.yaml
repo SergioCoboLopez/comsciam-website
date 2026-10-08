@@ -47,6 +47,9 @@ pages:
   - id: researchers
     path: researchers
     layout: researchers.html
+    children:
+      - id: research-groups
+        anchor: research-groups
   - id: publications
     path: publications
     layout: publications.html

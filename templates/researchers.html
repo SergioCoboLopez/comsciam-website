@@ -5,6 +5,8 @@
 <div class="prose">
   {{ content.intro | paragraphs }}
 </div>
+{# id matches children[].anchor for this block in site.yaml. #}
+<h2 id="research-groups">{{ content.research_groups_heading }}</h2>
 <ul class="people">
   {% for person in content.people %}
   <li class="person" id="{{ person.id }}">

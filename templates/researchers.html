@@ -5,19 +5,6 @@
 <div class="prose">
   {{ content.intro | paragraphs }}
 </div>
-{# id matches children[].anchor for this block in site.yaml. #}
-<h2 id="research-groups">{{ content.research_groups_heading }}</h2>
-<h2 id="research-groups">{{ content.groups_heading }}</h2>
-<ul class="area-list">
-  {% for group in content.groups %}
-  <li id="{{ group.id }}">
-    <div>
-      <h3>{{ group.name }}</h3>
-      <p>{{ group.description }}</p>
-    </div>
-  </li>
-  {% endfor %}
-</ul>
 <ul class="people">
   {% for person in content.people %}
   <li class="person" id="{{ person.id }}">
@@ -32,3 +19,15 @@
   {% endfor %}
 </ul>
 {% endblock %}
+{# id matches children[].anchor for this block in site.yaml. #}
+<h2 id="research-groups">{{ content.groups_heading }}</h2>
+<ul class="area-list">
+  {% for group in content.groups %}
+  <li id="{{ group.id }}">
+    <div>
+      <h3>{{ group.name }}</h3>
+      <p>{{ group.description }}</p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>

@@ -72,6 +72,34 @@ python scripts/update_publications.py \
 
 That script writes at the end of each list. Move the new block up if it should be first. Later, the same script can be fed by a query to a publication database; the page template does not need to change.
 
+## Add a subsection
+
+A subsection is a child of a menu entry. Hover **Inici** and the menu offers **Línies de recerca**, which jumps to that part of the home page. On a narrow screen the child is listed under Inici.
+
+Two files define it:
+
+1. `children` under the parent in `site.yaml`. `anchor` is the HTML id of the landing spot:
+
+```yaml
+- id: home
+  path: ""
+  layout: home.html
+  children:
+    - id: research-lines
+      anchor: research-lines
+```
+
+2. The visible name, in each `content/<language>/ui.yaml`:
+
+```yaml
+menu:
+  research-lines: Línies de recerca
+```
+
+The anchor must match an `id` in the parent template. For this one, `templates/home.html` has `<h2 id="research-lines">`.
+
+A child can instead be its own page. Give it `path` and `layout`, and add `content/<language>/<id>.yaml`, the same way as a top-level section. It still appears under the parent, because it is listed in `children`.
+
 ## Add a section
 
 1. Add a page to `site.yaml`:

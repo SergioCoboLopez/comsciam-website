@@ -38,6 +38,12 @@ pages:
   - id: home
     path: ""
     layout: home.html
+    # children are subsections of this menu entry.
+    # anchor jumps to an element with that id on this page (see templates/home.html).
+    # A child with path and layout would be its own page instead.
+    children:
+      - id: research-lines
+        anchor: research-lines
   - id: researchers
     path: researchers
     layout: researchers.html

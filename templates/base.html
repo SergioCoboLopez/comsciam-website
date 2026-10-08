@@ -43,10 +43,19 @@
     </div>
     <nav class="site-nav" aria-label="{{ ui.menu_label }}">
       <div class="wrap">
-        <ul>
+        <ul class="menu">
           {% for item in nav %}
-          <li>
-            <a href="{{ item.href }}" {% if item.id == page.id %}aria-current="page"{% endif %}>{{ item.label }}</a>
+          <li class="menu-item{% if item.open %} is-open{% endif %}">
+            <a href="{{ item.href }}" {% if item.current %}aria-current="page"{% endif %}>{{ item.label }}{% if item.children %} <span class="submenu-mark" aria-hidden="true">▾</span>{% endif %}</a>
+            {% if item.children %}
+            <ul class="submenu">
+              {% for child in item.children %}
+              <li>
+                <a href="{{ child.href }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.label }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
           </li>
           {% endfor %}
         </ul>

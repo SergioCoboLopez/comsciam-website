@@ -34,6 +34,7 @@ OUTPUT = ROOT / "docs"
 
 PALETTES = {"comsciam", "urv", "sea"}
 ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
+ANCHOR_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 
 REQUIRED_BY_LAYOUT = {
     "home.html": [
@@ -130,6 +131,95 @@ def asset_exists(file_path: str) -> None:
         fail(f"missing asset {file_path}")
 
 
+def join_paths(parent: str, child: str) -> str:
+    return "/".join(piece for piece in (parent, child) if piece)
+
+
+def child_entries(page: dict) -> list:
+    children = page.get("children") or []
+    if not isinstance(children, list):
+        fail(f"{page['id']} children should be a list")
+    return children
+
+
+def prepare_routes(pages: list) -> tuple[list, list[str]]:
+    """Pages that become HTML files, and every id that needs a menu label.
+
+    A child with `anchor` is a subsection of its parent page.
+    A child with `path` and `layout` is its own page, listed under the parent.
+    """
+    routes = []
+    menu_ids: list[str] = []
+    paths: list[str] = []
+    for page in pages:
+        menu_ids.append(page["id"])
+        routes.append(page)
+        paths.append(page["path"])
+        for child in child_entries(page):
+            require_keys(child, ["id"], f"child of {page['id']}")
+            menu_ids.append(child["id"])
+            has_anchor = "anchor" in child
+            has_page = "path" in child or "layout" in child
+            if has_anchor and has_page:
+                fail(f"{child['id']} should use anchor, or path and layout, not both")
+            if has_anchor:
+                if not ANCHOR_RE.match(str(child["anchor"])):
+                    fail(f"{child['id']} has an invalid anchor: {child['anchor']}")
+                template = (TEMPLATES / page["layout"]).read_text(encoding="utf-8")
+                if f'id="{child["anchor"]}"' not in template:
+                    fail(
+                        f"templates/{page['layout']} has no id=\"{child['anchor']}\". "
+                        "That id is the landing spot for the subsection."
+                    )
+                continue
+            require_keys(child, ["path", "layout"], child["id"])
+            routes.append({**child, "path": join_paths(page["path"], child["path"])})
+            paths.append(routes[-1]["path"])
+    if len(menu_ids) != len(set(menu_ids)):
+        fail("two pages or children in site.yaml use the same id")
+    if len(paths) != len(set(paths)):
+        fail("two pages in site.yaml use the same path")
+    return routes, menu_ids
+
+
+def build_nav(site: dict, ui: dict, here: str, default_lang: str, lang_id: str, current_id: str) -> list:
+    nav = []
+    for item in site["pages"]:
+        dest = output_dir(default_lang, lang_id, item["path"])
+        children = []
+        child_page_ids = []
+        for child in child_entries(item):
+            if "anchor" in child:
+                href = relative_link(here, dest) + "#" + child["anchor"]
+                current = False
+            else:
+                child_dest = output_dir(
+                    default_lang, lang_id, join_paths(item["path"], child["path"])
+                )
+                href = relative_link(here, child_dest)
+                current = child["id"] == current_id
+                child_page_ids.append(child["id"])
+            children.append(
+                {
+                    "id": child["id"],
+                    "label": ui["menu"][child["id"]],
+                    "href": href,
+                    "current": current,
+                }
+            )
+        nav.append(
+            {
+                "id": item["id"],
+                "label": ui["menu"][item["id"]],
+                "href": relative_link(here, dest),
+                "current": item["id"] == current_id,
+                "open": item["id"] == current_id or current_id in child_page_ids,
+                "children": children,
+            }
+        )
+    return nav
+
+
 def main() -> None:
     site = load_yaml(ROOT / "site.yaml")
     require_keys(
@@ -146,12 +236,8 @@ def main() -> None:
         fail("site.yaml needs at least one language")
 
     default_lang = site["languages"][0]["id"]
+    routes, menu_ids = prepare_routes(site["pages"])
     page_ids = [page["id"] for page in site["pages"]]
-    page_paths = [page["path"] for page in site["pages"]]
-    if len(page_ids) != len(set(page_ids)):
-        fail("two pages in site.yaml use the same id")
-    if len(page_paths) != len(set(page_paths)):
-        fail("two pages in site.yaml use the same path")
 
     for logo in site["logos"].values():
         asset_exists(logo)
@@ -162,12 +248,12 @@ def main() -> None:
         folder = CONTENT / lang_id
         ui = load_yaml(folder / "ui.yaml")
         require_keys(ui, ["menu", "full_name", "address", "footer"], f"{lang_id}/ui.yaml")
-        missing_labels = [page_id for page_id in page_ids if page_id not in ui["menu"]]
+        missing_labels = [page_id for page_id in menu_ids if page_id not in ui["menu"]]
         if missing_labels:
             fail(f"{lang_id}/ui.yaml menu is missing: {', '.join(missing_labels)}")
 
         pages: dict[str, dict] = {}
-        for page in site["pages"]:
+        for page in routes:
             label = f"{lang_id}/{page['id']}.yaml"
             content = load_yaml(folder / f"{page['id']}.yaml")
             layout = page["layout"]
@@ -231,19 +317,10 @@ def main() -> None:
     written: list[str] = []
     year = datetime.now().year
     for lang_id, bundle in loaded.items():
-        for page in site["pages"]:
+        for page in routes:
             here = output_dir(default_lang, lang_id, page["path"])
             content = bundle["pages"][page["id"]]
-            nav = []
-            for item in site["pages"]:
-                dest = output_dir(default_lang, lang_id, item["path"])
-                nav.append(
-                    {
-                        "id": item["id"],
-                        "label": bundle["ui"]["menu"][item["id"]],
-                        "href": relative_link(here, dest),
-                    }
-                )
+            nav = build_nav(site, bundle["ui"], here, default_lang, lang_id, page["id"])
             alternates = []
             for language in site["languages"]:
                 dest = output_dir(default_lang, language["id"], page["path"])

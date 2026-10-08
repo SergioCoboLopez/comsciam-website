@@ -6,7 +6,8 @@
 <div class="prose">
   {{ content.intro | paragraphs }}
 </div>
-<h2>{{ content.areas_heading }}</h2>
+{# id matches children[].anchor for this block in site.yaml. #}
+<h2 id="research-lines">{{ content.areas_heading }}</h2>
 <ul class="area-list">
   {% for area in content.areas %}
   <li>

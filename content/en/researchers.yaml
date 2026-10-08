@@ -21,7 +21,7 @@ people:
     bio: |
       Second placeholder biography, so the page shows more than one person.
 
-groups-heading: Research groups
+groups_heading: Research groups
 groups:
   - id: grup-1
     name: Group 1

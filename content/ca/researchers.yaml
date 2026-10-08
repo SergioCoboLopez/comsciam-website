@@ -21,7 +21,7 @@ people:
     bio: |
       Segona biografia provisional, per veure com queda més d'una persona.
 
-groups-heading: Grups de recerca
+groups_heading: Grups de recerca
 groups:
   - id: grup-1
     name: Grup 1

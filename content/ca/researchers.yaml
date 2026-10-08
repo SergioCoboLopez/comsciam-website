@@ -20,3 +20,15 @@ people:
     photo: assets/images/person.svg
     bio: |
       Segona biografia provisional, per veure com queda més d'una persona.
+
+groups-heading: Grups de recerca
+groups:
+  - id: grup-1
+    name: Grup 1
+    description: Descripció provisional del grupo.
+  - id: grup-2
+    name: Grup 2
+    description: Descripció provisional del grupo.
+  - id: grup-3
+    name: Grupo 3
+    description: Descripció provisional del grupo.

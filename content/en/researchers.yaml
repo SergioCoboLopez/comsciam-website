@@ -20,3 +20,15 @@ people:
     photo: assets/images/person.svg
     bio: |
       Second placeholder biography, so the page shows more than one person.
+
+groups-heading: Research groups
+groups:
+  - id: grup-1
+    name: Group 1
+    description: Placeholder description of the group.
+  - id: grup-2
+    name: Group 2
+    description: Placeholder description of the group.
+  - id: grup-3
+    name: Group 3
+    description: Placeholder description of the group.

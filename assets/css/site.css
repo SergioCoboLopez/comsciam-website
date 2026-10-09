@@ -183,10 +183,10 @@ a:hover {
 .menu-item:hover > .submenu {
   display: block;
 }
-.menu-item:focus-within > .submenu,
+/*.menu-item:focus-within > .submenu,
 .menu-item.is-open > .submenu {
   display: block;
-}
+}*/
 
 .submenu a {
   display: block;

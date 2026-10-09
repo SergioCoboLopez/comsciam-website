@@ -180,7 +180,9 @@ a:hover {
   border: 1px solid var(--color-line);
 }
 
-.menu-item:hover > .submenu,
+.menu-item:hover > .submenu {
+  display: block;
+}
 .menu-item:focus-within > .submenu,
 .menu-item.is-open > .submenu {
   display: block;

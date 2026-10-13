@@ -56,21 +56,14 @@ Photos go in `assets/images/`. Point `photo` at that file, for example `assets/i
 
 ## Add a publication
 
-Add a block under `items` in all three `publications.yaml` files, with the same `id`. Put new papers at the top: the page follows the file order. Leave the period off `authors`, `title`, and `venue`; the template adds it.
-
-Or append the same record to every language from the command line:
+Add the paper to `content/publications.bib`. The same list is used in Catalan, English, and Spanish. The language files only keep the page title and introduction.
 
 ```bash
-python scripts/update_publications.py \
-  --id surname-2026-keyword \
-  --title "Title of the paper" \
-  --authors "Surname, A.; Surname, B." \
-  --year 2026 \
-  --venue "Journal name" \
-  --doi "10.1234/example"
+python3 scripts/update_publications.py
+python3 build.py
 ```
 
-That script writes at the end of each list. Move the new block up if it should be first. Later, the same script can be fed by a query to a publication database; the page template does not need to change.
+The first command prints the list the site will show: year, the first two authors, title, journal, and link. The build reads the BibTeX file itself, so the print step is only there to check the result. Newest papers come first. A title links to the entry's `url`, or to `https://doi.org/` plus the DOI.
 
 ## Add a subsection
 

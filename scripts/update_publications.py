@@ -1,104 +1,255 @@
 #!/usr/bin/env python3
-"""Add one publication to Catalan, English, and Spanish at once.
+"""Turn content/publications.bib into the publication list used by the site.
 
-Paper titles usually stay in the language of the article, so the same
-bibliographic record is appended to each content/<language>/publications.yaml.
-The introduction of the page is left untouched.
+Run it on its own to print that list:
 
-The new item is added at the end. Move it to the top of the list if it
-should appear first.
+    python3 scripts/update_publications.py
 
-Example:
-
-    python scripts/update_publications.py \
-        --id cobo-2026-example \
-        --title "Title of the paper" \
-        --authors "Cobo, S.; Other, A." \
-        --year 2026 \
-        --venue "Journal name" \
-        --doi "10.0000/example"
+The website build reads the same function, so editing the BibTeX file and
+running python3 build.py is enough to update the three language pages.
 """
 
 from __future__ import annotations
 
-import argparse
 import re
 import sys
 from pathlib import Path
 
-import yaml
-
 ROOT = Path(__file__).resolve().parents[1]
+BIB_PATH = ROOT / "content" / "publications.bib"
+
+# HTML ids on the page. Same rule as build.py.
 ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
 
+# BibTeX accent commands, written as {\'o}, {\"a}, {\~n}, {\c{c}}.
+ACCENTS = {
+    "'": {"a": "á", "e": "é", "i": "í", "o": "ó", "u": "ú", "A": "Á", "E": "É", "I": "Í", "O": "Ó", "U": "Ú"},
+    "`": {"a": "à", "e": "è", "i": "ì", "o": "ò", "u": "ù", "A": "À", "E": "È", "O": "Ò", "U": "Ù"},
+    "^": {"a": "â", "e": "ê", "i": "î", "o": "ô", "u": "û"},
+    '"': {"a": "ä", "e": "ë", "i": "ï", "o": "ö", "u": "ü", "A": "Ä", "O": "Ö", "U": "Ü"},
+    "~": {"n": "ñ", "N": "Ñ", "a": "ã", "o": "õ"},
+    "c": {"c": "ç", "C": "Ç"},
+}
+SUBSCRIPTS = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
 
-def language_ids() -> list[str]:
-    site = yaml.safe_load((ROOT / "site.yaml").read_text(encoding="utf-8"))
-    return [language["id"] for language in site["languages"]]
+
+def load_publications(path: Path = BIB_PATH) -> list[dict]:
+    """Read a .bib file and return one dictionary per paper, newest first."""
+    if not path.is_file():
+        raise ValueError(f"missing {path.relative_to(ROOT)}")
+
+    text = path.read_text(encoding="utf-8").replace("\ufeff", "")
+    items = []
+    seen_ids = set()
+    for entry in parse_bib(text):
+        item = publication_from_entry(entry)
+        if item["id"] in seen_ids:
+            raise ValueError(f"two BibTeX entries become the same id: {item['id']}")
+        seen_ids.add(item["id"])
+        items.append(item)
+
+    items.sort(key=lambda item: (-item["year"], item["id"]))
+    return items
 
 
-def publication_path(lang_id: str) -> Path:
-    return ROOT / "content" / lang_id / "publications.yaml"
+def publication_from_entry(entry: dict) -> dict:
+    """Keep the fields the publications page knows how to show."""
+    key = entry["key"]
+    title = latex_to_text(required(entry, "title"))
+    authors = format_authors(required(entry, "author"))
+    year = parse_year(required(entry, "year"), key)
+    venue = latex_to_text(entry.get("journal") or entry.get("booktitle") or entry.get("publisher") or "")
+    if not venue:
+        raise ValueError(f"{key} needs a journal, booktitle, or publisher")
+
+    item = {
+        "id": html_id(key),
+        "title": title,
+        "authors": authors,
+        "year": year,
+        "venue": venue,
+    }
+    doi = latex_to_text(entry.get("doi", "")).removeprefix("https://doi.org/")
+    url = latex_to_text(entry.get("url", ""))
+    if doi:
+        item["doi"] = doi
+    if url:
+        item["url"] = url
+    elif doi:
+        item["url"] = f"https://doi.org/{doi}"
+    return item
 
 
-def existing_ids(path: Path) -> list[str]:
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or "items" not in data:
-        raise SystemExit(f"{path.relative_to(ROOT)} has no items list")
-    return [item["id"] for item in data["items"]]
+def required(entry: dict, field: str) -> str:
+    value = entry.get(field, "").strip()
+    if not value:
+        raise ValueError(f"{entry['key']} is missing {field}")
+    return value
+
+
+def parse_year(value: str, key: str) -> int:
+    match = re.search(r"\d{4}", value)
+    if not match:
+        raise ValueError(f"{key} has no four-digit year")
+    return int(match.group(0))
+
+
+def html_id(citation_key: str) -> str:
+    """Citation keys may contain dots and slashes. Page ids may not."""
+    cleaned = re.sub(r"[^A-Za-z0-9_-]+", "-", citation_key).strip("-")
+    cleaned = re.sub(r"-{2,}", "-", cleaned)
+    if cleaned and not cleaned[0].isalpha():
+        cleaned = "p-" + cleaned
+    if not ID_RE.match(cleaned):
+        raise ValueError(f"{citation_key} cannot be used as a page id")
+    return cleaned
+
+
+def format_authors(value: str) -> str:
+    """Show the first two authors. Mention that others exist when there are more."""
+    people = [format_person(part) for part in re.split(r"\s+and\s+", value) if part.strip()]
+    if not people:
+        raise ValueError("a publication has an empty author list")
+    if len(people) <= 2:
+        return "; ".join(people)
+    return f"{people[0]}; {people[1]} et al"
+
+
+def format_person(value: str) -> str:
+    """BibTeX writes 'Family, Given' or 'Given Family'. The page uses 'Family, Given'."""
+    name = latex_to_text(value)
+    if "," in name:
+        family, given = [part.strip() for part in name.split(",", 1)]
+        return f"{family}, {given}" if given else family
+    parts = name.split()
+    if len(parts) < 2:
+        return name
+    return f"{parts[-1]}, {' '.join(parts[:-1])}"
+
+
+def latex_to_text(value: str) -> str:
+    """Drop the LaTeX markup that reference managers put in titles and names."""
+    text = value.replace("\\%", "%").replace("\\&", "&")
+    text = re.sub(
+        r"\\(['`^\"~c])\s*\{?([A-Za-z])\}?",
+        lambda match: ACCENTS.get(match.group(1), {}).get(match.group(2), match.group(2)),
+        text,
+    )
+    text = re.sub(r"\\(?:mathrm|mathbf|mathit|text|emph|textbf|textit)\s*", "", text)
+    text = re.sub(r"_\{([0-9]+)\}", lambda match: match.group(1).translate(SUBSCRIPTS), text)
+    text = re.sub(r"_([0-9])", lambda match: match.group(1).translate(SUBSCRIPTS), text)
+    text = text.replace("$", "").replace("{", "").replace("}", "")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def parse_bib(text: str) -> list[dict]:
+    """Split a .bib file into entries. Each entry is the citation key plus its fields."""
+    entries = []
+    index = 0
+    length = len(text)
+    while index < length:
+        if text[index] != "@":
+            index += 1
+            continue
+        header = re.match(r"@(\w+)\s*\{", text[index:])
+        if not header:
+            index += 1
+            continue
+        kind = header.group(1).lower()
+        index += header.end()
+        if kind in {"comment", "string", "preamble"}:
+            _, index = read_braced(text, index - 1)
+            continue
+        comma = text.find(",", index)
+        if comma < 0:
+            raise ValueError("a BibTeX entry is missing its citation key")
+        key = text[index:comma].strip()
+        index = comma + 1
+        fields = {"key": key, "type": kind}
+        while index < length:
+            while index < length and text[index] in " \t\r\n,":
+                index += 1
+            if index >= length or text[index] == "}":
+                index += 1
+                break
+            name_match = re.match(r"([A-Za-z][\w:-]*)\s*=\s*", text[index:])
+            if not name_match:
+                snippet = text[index : index + 40]
+                raise ValueError(f"{key}: could not read a field near {snippet!r}")
+            name = name_match.group(1).lower()
+            index += name_match.end()
+            if index >= length:
+                raise ValueError(f"{key} is missing a value for {name}")
+            if text[index] == "{":
+                raw, index = read_braced(text, index)
+            elif text[index] == '"':
+                raw, index = read_quoted(text, index)
+            else:
+                bare = re.match(r"[^\s,]+", text[index:])
+                raw = bare.group(0) if bare else ""
+                index += len(raw)
+            fields[name] = raw.strip()
+        entries.append(fields)
+    return entries
+
+
+def read_braced(text: str, index: int) -> tuple[str, int]:
+    """Read a {...} value, including braces nested inside it, and return the inside text."""
+    if index >= len(text) or text[index] != "{":
+        raise ValueError("expected an opening brace in the BibTeX file")
+    depth = 0
+    chars: list[str] = []
+    index += 1
+    while index < len(text):
+        character = text[index]
+        if character == "\\" and index + 1 < len(text):
+            chars.append(character)
+            chars.append(text[index + 1])
+            index += 2
+            continue
+        if character == "{":
+            depth += 1
+            chars.append(character)
+        elif character == "}":
+            if depth == 0:
+                return "".join(chars), index + 1
+            depth -= 1
+            chars.append(character)
+        else:
+            chars.append(character)
+        index += 1
+    raise ValueError("a BibTeX value is missing its closing brace")
+
+
+def read_quoted(text: str, index: int) -> tuple[str, int]:
+    """Read a "quoted" value."""
+    chars: list[str] = []
+    index += 1
+    while index < len(text):
+        character = text[index]
+        if character == "\\" and index + 1 < len(text):
+            chars.append(text[index + 1])
+            index += 2
+            continue
+        if character == '"':
+            return "".join(chars), index + 1
+        chars.append(character)
+        index += 1
+    raise ValueError("a BibTeX value is missing its closing quote")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Append a publication in every language.")
-    parser.add_argument("--id", required=True, help="Short stable id, such as surname-2026-keyword")
-    parser.add_argument("--title", required=True)
-    parser.add_argument("--authors", required=True)
-    parser.add_argument("--year", required=True, type=int)
-    parser.add_argument("--venue", required=True)
-    parser.add_argument("--url", default="")
-    parser.add_argument("--doi", default="")
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print the block that would be added, without writing files",
-    )
-    args = parser.parse_args()
-
-    if not ID_RE.match(args.id):
-        raise SystemExit("--id must start with a letter and use only letters, numbers, _ or -")
-
-    item = {
-        "id": args.id,
-        "title": args.title,
-        "authors": args.authors,
-        "year": args.year,
-        "venue": args.venue,
-    }
-    if args.url:
-        item["url"] = args.url
-    if args.doi:
-        item["doi"] = args.doi
-
-    dumped = yaml.safe_dump([item], allow_unicode=True, sort_keys=False).strip()
-    # Keep the new item indented under the existing `items:` list.
-    block = "\n".join(("  " + line if line else line) for line in dumped.splitlines()) + "\n"
-    paths = [publication_path(lang_id) for lang_id in language_ids()]
-    for path in paths:
-        if not path.is_file():
-            raise SystemExit(f"Missing {path.relative_to(ROOT)}")
-        if args.id in existing_ids(path):
-            raise SystemExit(f"{args.id} is already in {path.relative_to(ROOT)}")
-
-    if args.dry_run:
-        print(block, end="")
+    items = load_publications()
+    if not items:
+        print(f"No publications in {BIB_PATH.relative_to(ROOT)}")
         return
-
-    for path in paths:
-        text = path.read_text(encoding="utf-8")
-        if not text.endswith("\n"):
-            text += "\n"
-        path.write_text(text + block, encoding="utf-8")
-        print(f"Added {args.id} to {path.relative_to(ROOT)}")
+    for item in items:
+        print(f"{item['year']}  {item['authors']}")
+        print(f"     {item['title']}")
+        print(f"     {item['venue']}")
+        if item.get("url"):
+            print(f"     {item['url']}")
+        print()
 
 
 if __name__ == "__main__":
@@ -106,3 +257,5 @@ if __name__ == "__main__":
         main()
     except BrokenPipeError:
         sys.exit(0)
+    except ValueError as error:
+        raise SystemExit(error) from error

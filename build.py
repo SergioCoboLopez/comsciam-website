@@ -19,6 +19,7 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -27,6 +28,9 @@ from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoe
 from markupsafe import Markup, escape
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "scripts"))
+from update_publications import load_publications  # noqa: E402
+
 CONTENT = ROOT / "content"
 TEMPLATES = ROOT / "templates"
 ASSETS = ROOT / "assets"
@@ -47,7 +51,7 @@ REQUIRED_BY_LAYOUT = {
         "areas",
     ],
     "researchers.html": ["title", "meta_description", "heading", "intro", "people"],
-    "publications.html": ["title", "meta_description", "heading", "intro", "items"],
+    "publications.html": ["title", "meta_description", "heading", "intro"],
     "simple.html": ["title", "meta_description", "heading", "intro"],
 }
 
@@ -242,6 +246,13 @@ def main() -> None:
     for logo in site["logos"].values():
         asset_exists(logo)
 
+    publication_items: list[dict] = []
+    if any(page["layout"] == "publications.html" for page in routes):
+        try:
+            publication_items = load_publications(CONTENT / "publications.bib")
+        except ValueError as error:
+            fail(str(error))
+
     loaded: dict[str, dict] = {}
     for language in site["languages"]:
         lang_id = language["id"]
@@ -270,6 +281,8 @@ def main() -> None:
                         fail(f"{label} has an invalid person id: {person['id']}")
                     asset_exists(person["photo"])
             if layout == "publications.html":
+                # The paper list is shared. Language files only keep the translated heading.
+                content["items"] = publication_items
                 for item in content["items"]:
                     require_keys(item, PUBLICATION_FIELDS, f"{label} publication")
                     if not ID_RE.match(str(item["id"])):

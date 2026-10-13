@@ -5,9 +5,23 @@
 <div class="prose">
   {{ content.intro | paragraphs }}
 </div>
+{% set years = [] %}
+{% for item in content["items"] %}
+  {% if item.year not in years %}
+    {% set _ = years.append(item.year) %}
+  {% endif %}
+{% endfor %}
+<label class="year-filter">
+  <select id="year-filter" aria-label="{{ content.years_label | default('All years') }}">
+    <option value="all">{{ content.years_label | default("All years") }}</option>
+    {% for year in years %}
+    <option value="{{ year }}">{{ year }}</option>
+    {% endfor %}
+  </select>
+</label>
 <ol class="bibliography">
   {% for item in content["items"] %}
-  <li id="{{ item.id }}">
+  <li id="{{ item.id }}" data-year="{{ item.year }}">
     <div class="reference-main">
       <span class="year">{{ item.year }}</span>
       {{ item.authors }}.
@@ -27,4 +41,14 @@
   </li>
   {% endfor %}
 </ol>
+<script>
+  const yearFilter = document.querySelector("#year-filter");
+  const papers = document.querySelectorAll(".bibliography li");
+  yearFilter.addEventListener("change", () => {
+    const year = yearFilter.value;
+    papers.forEach((paper) => {
+      paper.hidden = year !== "all" && paper.dataset.year !== year;
+    });
+  });
+</script>
 {% endblock %}

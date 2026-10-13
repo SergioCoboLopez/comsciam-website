@@ -11,12 +11,19 @@ running python3 build.py is enough to update the three language pages.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BIB_PATH = ROOT / "content" / "publications.bib"
+CITATIONS_PATH = ROOT / "content" / "citations.json"
+# OpenAlex asks callers to identify themselves. Google Scholar has no API for this.
+USER_AGENT = "ComSCIAM-website/1.0 (mailto:comsciam@example.com)"
 
 # HTML ids on the page. Same rule as build.py.
 ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
@@ -49,7 +56,92 @@ def load_publications(path: Path = BIB_PATH) -> list[dict]:
         items.append(item)
 
     items.sort(key=lambda item: (-item["year"], item["id"]))
+    attach_citations(items)
     return items
+
+
+def attach_citations(items: list[dict]) -> None:
+    """Add a citation count and an OpenAlex link to each paper that has a DOI.
+
+    A saved copy in content/citations.json is used when OpenAlex cannot be reached,
+    so the page still builds. Papers with no saved count get no banner.
+    """
+    cache = read_citation_cache()
+    dois = [normalize_doi(item["doi"]) for item in items if item.get("doi")]
+    try:
+        fresh = fetch_openalex(dois)
+    except (OSError, urllib.error.URLError, json.JSONDecodeError, ValueError) as error:
+        print(f"OpenAlex unavailable, using saved citation counts: {error}", file=sys.stderr)
+        fresh = {}
+    if fresh:
+        cache.update(fresh)
+        write_citation_cache(cache)
+    for item in items:
+        doi = normalize_doi(item["doi"]) if item.get("doi") else ""
+        record = cache.get(doi)
+        if not record:
+            continue
+        item["citations"] = record["count"]
+        item["citations_url"] = record["url"]
+
+
+def normalize_doi(doi: str) -> str:
+    return doi.strip().removeprefix("https://doi.org/").lower()
+
+
+def read_citation_cache() -> dict:
+    if not CITATIONS_PATH.is_file():
+        return {}
+    try:
+        data = json.loads(CITATIONS_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def write_citation_cache(cache: dict) -> None:
+    text = json.dumps(cache, indent=2, sort_keys=True) + "\n"
+    CITATIONS_PATH.write_text(text, encoding="utf-8")
+
+
+def fetch_openalex(dois: list[str]) -> dict:
+    """Ask OpenAlex for cited-by counts. The returned url lists the citing papers."""
+    found = {}
+    unique = list(dict.fromkeys(doi for doi in dois if doi))
+    for start in range(0, len(unique), 25):
+        chunk = unique[start : start + 25]
+        doi_filter = "|".join(f"https://doi.org/{doi}" for doi in chunk)
+        query = urllib.parse.urlencode(
+            {
+                "filter": f"doi:{doi_filter}",
+                "per-page": "25",
+                "select": "id,doi,cited_by_count",
+            }
+        )
+        request = urllib.request.Request(
+            f"https://api.openalex.org/works?{query}",
+            headers={"User-Agent": USER_AGENT},
+        )
+        with urllib.request.urlopen(request, timeout=20) as response:
+            payload = json.load(response)
+        for work in payload.get("results", []):
+            record = citation_record(work)
+            if record is not None:
+                doi, details = record
+                found[doi] = details
+    return found
+
+
+def citation_record(work: dict) -> tuple[str, dict] | None:
+    doi = normalize_doi(str(work.get("doi") or ""))
+    openalex_id = str(work.get("id") or "").rstrip("/").rsplit("/", 1)[-1]
+    count = work.get("cited_by_count")
+    if not doi or not openalex_id.startswith("W") or count is None:
+        return None
+    return doi, {
+        "count": int(count),
+        "url": f"https://openalex.org/works?filter=cites:{openalex_id}",
+    }
 
 
 def publication_from_entry(entry: dict) -> dict:
@@ -249,6 +341,8 @@ def main() -> None:
         print(f"     {item['venue']}")
         if item.get("url"):
             print(f"     {item['url']}")
+        if "citations" in item:
+            print(f"     citations: {item['citations']}")
         print()
 
 

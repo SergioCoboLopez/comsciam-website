@@ -8,16 +8,21 @@
 <ol class="bibliography">
   {% for item in content["items"] %}
   <li id="{{ item.id }}">
-    <span class="year">{{ item.year }}</span>
-    {{ item.authors }}.
-    {% if item.url %}
-    <a href="{{ item.url }}">{{ item.title }}</a>.
-    {% else %}
-    {{ item.title }}.
-    {% endif %}
-    <span class="venue">{{ item.venue }}</span>.
-    {% if item.doi %}
-    <a href="https://doi.org/{{ item.doi }}">doi:{{ item.doi }}</a>
+    <div class="reference-main">
+      <span class="year">{{ item.year }}</span>
+      {{ item.authors }}.
+      {% if item.url %}
+      <a href="{{ item.url }}">{{ item.title }}</a>.
+      {% else %}
+      {{ item.title }}.
+      {% endif %}
+      <span class="venue">{{ item.venue }}</span>.
+      {% if item.doi %}
+      <a href="https://doi.org/{{ item.doi }}">doi:{{ item.doi }}</a>
+      {% endif %}
+    </div>
+    {% if item.citations is defined %}
+    <a class="citations" href="{{ item.citations_url }}">{{ content.citations_label | default("citations") }}: {{ item.citations }}</a>
     {% endif %}
   </li>
   {% endfor %}

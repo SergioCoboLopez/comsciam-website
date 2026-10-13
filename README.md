@@ -65,6 +65,8 @@ python3 build.py
 
 The first command prints the list the site will show: year, the first two authors, title, journal, and link. The build reads the BibTeX file itself, so the print step is only there to check the result. Newest papers come first. A title links to the entry's `url`, or to `https://doi.org/` plus the DOI.
 
+Each paper with a DOI also gets a citation count from OpenAlex. The count is saved in `content/citations.json`, and the banner on the page links to the OpenAlex list of citing papers. Google Scholar does not offer an API for this. If OpenAlex cannot be reached, the build keeps the last saved counts.
+
 ## Add a subsection
 
 A subsection is a child of a menu entry. Hover **Inici** and the menu offers **Línies de recerca**, which jumps to that part of the home page. On a narrow screen the child is listed under Inici.

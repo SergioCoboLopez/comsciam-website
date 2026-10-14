@@ -16,7 +16,7 @@ people:
     photo: assets/images/person.svg
   - id: persona-2
     name: Roger Guimerà
-    role: PI
+    role: ip
     email: persona.2@urv.cat
     lab: "Seeslab"
     lab_url: https://seeslab.urv.cat/

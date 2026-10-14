@@ -73,7 +73,7 @@ python3 scripts/update_publications.py
 python3 build.py
 ```
 
-The first command prints the list the site will show: year, the first two authors, title, journal, and link. The build reads the BibTeX file itself, so the print step is only there to check the result. Newest papers come first. A title links to the entry's `url`, or to `https://doi.org/` plus the DOI.
+The first command prints the list the site will show: year, the first two authors, title, journal, and link. An arXiv entry without a journal is listed as `arXiv:` plus its number, and the title links to the `url`. The build reads the BibTeX file itself, so the print step is only there to check the result. Newest papers come first. A published title links to the entry's `url`, or to `https://doi.org/` plus the DOI.
 
 Each paper with a DOI also gets a citation count from OpenAlex. The count is saved in `content/citations.json`, and the banner on the page links to the OpenAlex list of citing papers. Google Scholar does not offer an API for this. If OpenAlex cannot be reached, the build keeps the last saved counts.
 

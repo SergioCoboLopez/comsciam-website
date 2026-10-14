@@ -152,9 +152,7 @@ def publication_from_entry(entry: dict) -> dict:
     title = latex_to_text(required(entry, "title"))
     authors = format_authors(raw_authors)
     year = parse_year(required(entry, "year"), key)
-    venue = latex_to_text(entry.get("journal") or entry.get("booktitle") or entry.get("publisher") or "")
-    if not venue:
-        raise ValueError(f"{key} needs a journal, booktitle, or publisher")
+    venue = venue_name(entry)
 
     item = {
         "id": html_id(key),
@@ -173,6 +171,28 @@ def publication_from_entry(entry: dict) -> dict:
     elif doi:
         item["url"] = f"https://doi.org/{doi}"
     return item
+
+
+def venue_name(entry: dict) -> str:
+    """Journal for a published paper, or arXiv:id for a preprint."""
+    published = latex_to_text(entry.get("journal") or entry.get("booktitle") or entry.get("publisher") or "")
+    if published:
+        return published
+    archive = latex_to_text(entry.get("archiveprefix") or "").lower()
+    eprint = latex_to_text(entry.get("eprint") or "")
+    url = latex_to_text(entry.get("url") or "")
+    if archive == "arxiv" or "arxiv.org" in url.lower():
+        identifier = eprint or arxiv_id(url)
+        return f"arXiv:{identifier}" if identifier else "arXiv"
+    other = latex_to_text(entry.get("howpublished") or entry.get("note") or "")
+    if other:
+        return other
+    raise ValueError(f"{entry['key']} needs a journal, booktitle, publisher, or arXiv id")
+
+
+def arxiv_id(url: str) -> str:
+    match = re.search(r"arxiv\.org/(?:abs|pdf)/([0-9]{4}\.[0-9]+)(?:v\d+)?", url, re.IGNORECASE)
+    return match.group(1) if match else ""
 
 
 def required(entry: dict, field: str) -> str:

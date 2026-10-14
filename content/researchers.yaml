@@ -11,7 +11,7 @@ people:
     role: postdoc
     email: persona.1@urv.cat
     lab: Seeslab
-    lab_url: https://seeslab.urv.cat/
+    lab_url: https://seeslab.info/
     bio: ""
     photo: assets/images/person.svg
   - id: persona-2
@@ -19,7 +19,7 @@ people:
     role: ip
     email: persona.2@urv.cat
     lab: "Seeslab"
-    lab_url: https://seeslab.urv.cat/
+    lab_url: https://seeslab.info/
     bio: ""
     photo: assets/images/person.svg
   - id: persona-3
@@ -27,6 +27,6 @@ people:
     role: ip
     email: persona.3@urv.cat
     lab: "Seeslab"
-    lab_url: https://seeslab.urv.cat/
+    lab_url: https://seeslab.info/
     bio: ""
     photo: assets/images/person.svg

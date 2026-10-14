@@ -46,13 +46,24 @@ Edit the language you want, then run `python build.py` again.
 - Menu labels, footer, and the long name of the group: `content/ca/ui.yaml`
 - A blank line inside a text block starts a new paragraph
 
-Keep the three languages in step. The build stops if one language has a different number of research lines, or different person and publication ids.
+Keep the three languages in step. The build stops if one language has a different number of research lines.
 
 ## Add a person
 
-Copy a person block in `content/ca/researchers.yaml` and give it a new `id`. Repeat the same `id`, in the same position, in English and Spanish. Translate `role` and `bio`. Names and emails can stay as they are.
+Add a block under `people` in `content/researchers.yaml`. The same list is used in Catalan, English, and Spanish.
 
-Photos go in `assets/images/`. Point `photo` at that file, for example `assets/images/surname.jpg`.
+```yaml
+- id: surname
+  name: Name Surname
+  role: researcher
+  email: name.surname@urv.cat
+  lab: Laboratory name
+  lab_url: https://example.com
+  bio: ""
+  publications: ""
+```
+
+`role` is one of `ip`, `researcher`, `postdoc`, or `phd`. The words shown on the page are `roles` in `content/ca/researchers.yaml` and the English and Spanish copies. Leave `lab`, `lab_url`, or `publications` empty to hide that line. An empty `bio` is replaced by a short placeholder paragraph. `publications` is a link, for example `../publications/` or a personal page. Photos are optional; the default image is `assets/images/person.svg`.
 
 ## Add a publication
 

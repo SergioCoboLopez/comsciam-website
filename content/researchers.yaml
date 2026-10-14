@@ -1,0 +1,25 @@
+# One researcher list for Catalan, English, and Spanish.
+# Copy a block to add a person. role must be: ip, researcher, postdoc, or phd.
+# The visible role name is translated in content/<language>/researchers.yaml.
+# Leave lab, lab_url, bio, or publications empty to hide that line.
+# An empty bio is shown as a short placeholder paragraph.
+
+people:
+  - id: persona-1
+    name: Sergio Cobo-López
+    role: postdoc
+    email: persona.1@urv.cat
+    lab: Seeslab
+    lab_url: https://seeslab.urv.cat/
+    bio: ""
+    publications: ../publications/
+    photo: assets/images/person.svg
+  - id: persona-2
+    name: Roger Guimerà
+    role: PI
+    email: persona.2@urv.cat
+    lab: "Seeslab"
+    lab_url: https://seeslab.urv.cat/
+    bio: ""
+    publications: ../publications/
+    photo: assets/images/person.svg

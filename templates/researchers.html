@@ -13,7 +13,15 @@
       <h2>{{ person.name }}</h2>
       <p class="role">{{ person.role }}</p>
       <p><a href="mailto:{{ person.email }}">{{ person.email }}</a></p>
+      {% if person.lab %}
+      <p class="lab">{% if person.lab_url %}<a href="{{ person.lab_url }}">{{ person.lab }}</a>{% else %}{{ person.lab }}{% endif %}</p>
+      {% elif person.lab_url %}
+      <p class="lab"><a href="{{ person.lab_url }}">{{ person.lab_url }}</a></p>
+      {% endif %}
       {{ person.bio | paragraphs }}
+      {% if person.publications %}
+      <p><a href="{{ person.publications }}">{{ content.publications_label }}</a></p>
+      {% endif %}
     </div>
   </li>
   {% endfor %}

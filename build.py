@@ -50,12 +50,25 @@ REQUIRED_BY_LAYOUT = {
         "areas_heading",
         "areas",
     ],
-    "researchers.html": ["title", "meta_description", "heading", "intro", "people"],
+    "researchers.html": [
+        "title",
+        "meta_description",
+        "heading",
+        "intro",
+        "roles",
+        "publications_label",
+    ],
     "publications.html": ["title", "meta_description", "heading", "intro"],
     "simple.html": ["title", "meta_description", "heading", "intro"],
 }
 
-PERSON_FIELDS = ["id", "name", "role", "email", "photo", "bio"]
+PERSON_FIELDS = ["id", "name", "role", "email"]
+ROLE_KEYS = ("ip", "researcher", "postdoc", "phd")
+DEFAULT_PHOTO = "assets/images/person.svg"
+DEFAULT_BIO = (
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+)
 PUBLICATION_FIELDS = ["id", "title", "authors", "year", "venue"]
 AREA_FIELDS = ["title", "text"]
 
@@ -133,6 +146,66 @@ def check_same_ids(records: list[tuple[str, list[str]]], label: str) -> None:
 def asset_exists(file_path: str) -> None:
     if not (ROOT / file_path).is_file():
         fail(f"missing asset {file_path}")
+
+
+def blank(value: object) -> str:
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def load_researcher_records() -> list[dict]:
+    """Read the shared researcher list. Language files only translate the role names."""
+    data = load_yaml(CONTENT / "researchers.yaml")
+    people = data.get("people")
+    if not isinstance(people, list) or not people:
+        fail("content/researchers.yaml needs a people list")
+    records = []
+    seen: set[str] = set()
+    for index, person in enumerate(people, start=1):
+        label = f"content/researchers.yaml person {index}"
+        if not isinstance(person, dict):
+            fail(f"{label} should be a mapping")
+        require_keys(person, PERSON_FIELDS, label)
+        person_id = str(person["id"])
+        if not ID_RE.match(person_id):
+            fail(f"{label} has an invalid id: {person_id}")
+        if person_id in seen:
+            fail(f"content/researchers.yaml repeats the id {person_id}")
+        seen.add(person_id)
+        role = blank(person["role"])
+        if role not in ROLE_KEYS:
+            fail(f"{person_id} has unknown role '{role}'. Use one of: {', '.join(ROLE_KEYS)}")
+        photo = blank(person.get("photo")) or DEFAULT_PHOTO
+        asset_exists(photo)
+        records.append(
+            {
+                "id": person_id,
+                "name": blank(person["name"]),
+                "role": role,
+                "email": blank(person["email"]),
+                "photo": photo,
+                "lab": blank(person.get("lab")),
+                "lab_url": blank(person.get("lab_url")),
+                "bio": blank(person.get("bio")),
+                "publications": blank(person.get("publications")),
+            }
+        )
+    return records
+
+
+def people_for_language(records: list[dict], roles: dict, label: str) -> list[dict]:
+    missing = [key for key in ROLE_KEYS if key not in roles]
+    if missing:
+        fail(f"{label} roles is missing: {', '.join(missing)}")
+    people = []
+    for person in records:
+        shown = dict(person)
+        shown["role"] = roles[person["role"]]
+        if not shown["bio"]:
+            shown["bio"] = DEFAULT_BIO
+        people.append(shown)
+    return people
 
 
 def join_paths(parent: str, child: str) -> str:
@@ -253,6 +326,10 @@ def main() -> None:
         except ValueError as error:
             fail(str(error))
 
+    researcher_records: list[dict] = []
+    if any(page["layout"] == "researchers.html" for page in routes):
+        researcher_records = load_researcher_records()
+
     loaded: dict[str, dict] = {}
     for language in site["languages"]:
         lang_id = language["id"]
@@ -275,11 +352,7 @@ def main() -> None:
                 for index, area in enumerate(content["areas"], start=1):
                     require_keys(area, AREA_FIELDS, f"{label} area {index}")
             if layout == "researchers.html":
-                for person in content["people"]:
-                    require_keys(person, PERSON_FIELDS, f"{label} person")
-                    if not ID_RE.match(str(person["id"])):
-                        fail(f"{label} has an invalid person id: {person['id']}")
-                    asset_exists(person["photo"])
+                content["people"] = people_for_language(researcher_records, content["roles"], label)
             if layout == "publications.html":
                 # The paper list is shared. Language files only keep the translated heading.
                 content["items"] = publication_items

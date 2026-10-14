@@ -304,6 +304,12 @@ main h2 {
   margin: 1.5rem 0 0;
 }
 
+.author-filter {
+  margin: 1rem 0 0;
+  font-weight: 700;
+  color: var(--color-accent-dark);
+}
+
 .year-filter select {
   appearance: none;
   margin: 0;

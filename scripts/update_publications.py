@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -147,8 +148,9 @@ def citation_record(work: dict) -> tuple[str, dict] | None:
 def publication_from_entry(entry: dict) -> dict:
     """Keep the fields the publications page knows how to show."""
     key = entry["key"]
+    raw_authors = required(entry, "author")
     title = latex_to_text(required(entry, "title"))
-    authors = format_authors(required(entry, "author"))
+    authors = format_authors(raw_authors)
     year = parse_year(required(entry, "year"), key)
     venue = latex_to_text(entry.get("journal") or entry.get("booktitle") or entry.get("publisher") or "")
     if not venue:
@@ -158,6 +160,7 @@ def publication_from_entry(entry: dict) -> dict:
         "id": html_id(key),
         "title": title,
         "authors": authors,
+        "author_sigs": author_signatures(raw_authors),
         "year": year,
         "venue": venue,
     }
@@ -195,6 +198,36 @@ def html_id(citation_key: str) -> str:
     if not ID_RE.match(cleaned):
         raise ValueError(f"{citation_key} cannot be used as a page id")
     return cleaned
+
+
+def author_signatures(value: str) -> list[str]:
+    """One comparable name per author, so a researcher can be matched to a paper."""
+    signatures = []
+    for part in re.split(r"\s+and\s+", value):
+        tokens = name_tokens(part)
+        if tokens:
+            signatures.append(" ".join(sorted(tokens)))
+    return signatures
+
+
+def name_tokens(value: str) -> set[str]:
+    """Lower case, without accents or hyphens, so Cobo-López and Cobo-Lopez match."""
+    text = latex_to_text(value)
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(character for character in text if not unicodedata.combining(character))
+    text = text.lower().replace("-", " ").replace(",", " ").replace(".", " ")
+    return {token for token in text.split() if token}
+
+
+def names_match(researcher: str, author_signature: str) -> bool:
+    """True when the bibliography name is the researcher, or the same name minus one surname."""
+    person = name_tokens(researcher)
+    author = set(author_signature.split())
+    if len(person) < 2 or len(author) < 2:
+        return False
+    if person == author:
+        return True
+    return author <= person and len(person - author) <= 1
 
 
 def format_authors(value: str) -> str:

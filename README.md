@@ -60,10 +60,9 @@ Add a block under `people` in `content/researchers.yaml`. The same list is used 
   lab: Laboratory name
   lab_url: https://example.com
   bio: ""
-  publications: ""
 ```
 
-`role` is one of `ip`, `researcher`, `postdoc`, or `phd`. The words shown on the page are `roles` in `content/ca/researchers.yaml` and the English and Spanish copies. Leave `lab`, `lab_url`, or `publications` empty to hide that line. An empty `bio` is replaced by a short placeholder paragraph. `publications` is a link, for example `../publications/` or a personal page. Photos are optional; the default image is `assets/images/person.svg`.
+`role` is one of `ip`, `researcher`, `postdoc`, or `phd`. The words shown on the page are `roles` in `content/ca/researchers.yaml` and the English and Spanish copies. Leave `lab` or `lab_url` empty to hide that line. An empty `bio` is replaced by a short placeholder paragraph. The publications link is added when the person's name appears among the authors in `content/publications.bib`, and it opens only that person's papers. Photos are optional; the default image is `assets/images/person.svg`.
 
 ## Add a publication
 

@@ -19,9 +19,10 @@
     {% endfor %}
   </select>
 </label>
+<p id="author-filter" class="author-filter" hidden></p>
 <ol class="bibliography">
   {% for item in content["items"] %}
-  <li id="{{ item.id }}" data-year="{{ item.year }}">
+  <li id="{{ item.id }}" data-year="{{ item.year }}" data-authors="{{ item.author_ids | join(' ') }}">
     <div class="reference-main">
       <span class="year">{{ item.year }}</span>
       {{ item.authors }}.
@@ -44,11 +45,27 @@
 <script>
   const yearFilter = document.querySelector("#year-filter");
   const papers = document.querySelectorAll(".bibliography li");
-  yearFilter.addEventListener("change", () => {
+  const params = new URLSearchParams(window.location.search);
+  const authorId = params.get("author");
+  const authorNote = document.querySelector("#author-filter");
+  if (authorNote && authorId && params.get("name")) {
+    authorNote.textContent = params.get("name");
+  }
+
+  function applyFilters() {
     const year = yearFilter.value;
     papers.forEach((paper) => {
-      paper.hidden = year !== "all" && paper.dataset.year !== year;
+      const yearOk = year === "all" || paper.dataset.year === year;
+      const authors = (paper.dataset.authors || "").split(/\s+/).filter(Boolean);
+      const authorOk = !authorId || authors.includes(authorId);
+      paper.hidden = !(yearOk && authorOk);
     });
-  });
+    if (authorNote) {
+      authorNote.hidden = !authorId;
+    }
+  }
+
+  yearFilter.addEventListener("change", applyFilters);
+  applyFilters();
 </script>
 {% endblock %}

@@ -22,6 +22,7 @@ import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote
 
 import yaml
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
@@ -29,7 +30,7 @@ from markupsafe import Markup, escape
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from update_publications import load_publications  # noqa: E402
+from update_publications import load_publications, names_match  # noqa: E402
 
 CONTENT = ROOT / "content"
 TEMPLATES = ROOT / "templates"
@@ -194,6 +195,24 @@ def load_researcher_records() -> list[dict]:
     return records
 
 
+def link_researcher_publications(records: list[dict], items: list[dict]) -> None:
+    """Point each researcher's publications link at the papers they authored."""
+    for item in items:
+        item["author_ids"] = []
+    for record in records:
+        matched = False
+        for item in items:
+            if any(names_match(record["name"], signature) for signature in item.get("author_sigs", [])):
+                item["author_ids"].append(record["id"])
+                matched = True
+        if matched:
+            record["publications"] = (
+                "../publications/?author=" + quote(record["id"]) + "&name=" + quote(record["name"])
+            )
+        else:
+            record["publications"] = ""
+
+
 def people_for_language(records: list[dict], roles: dict, label: str) -> list[dict]:
     missing = [key for key in ROLE_KEYS if key not in roles]
     if missing:
@@ -329,6 +348,8 @@ def main() -> None:
     researcher_records: list[dict] = []
     if any(page["layout"] == "researchers.html" for page in routes):
         researcher_records = load_researcher_records()
+    if researcher_records and publication_items:
+        link_researcher_publications(researcher_records, publication_items)
 
     loaded: dict[str, dict] = {}
     for language in site["languages"]:

@@ -62,13 +62,15 @@ def load_publications(path: Path = BIB_PATH) -> list[dict]:
 
 
 def attach_citations(items: list[dict]) -> None:
-    """Add a citation count and an OpenAlex link to each paper that has a DOI.
+    """Add a citation count and an OpenAlex link.
 
-    A saved copy in content/citations.json is used when OpenAlex cannot be reached,
-    so the page still builds. Papers with no saved count get no banner.
+    Published papers are looked up by their DOI. A preprint is looked up by the
+    DOI arXiv assigns, 10.48550/arxiv.<id>. A saved copy in content/citations.json
+    is used when OpenAlex cannot be reached, so the page still builds. Papers
+    with no saved count get no banner.
     """
     cache = read_citation_cache()
-    dois = [normalize_doi(item["doi"]) for item in items if item.get("doi")]
+    dois = [key for item in items if (key := citation_key(item))]
     try:
         fresh = fetch_openalex(dois)
     except (OSError, urllib.error.URLError, json.JSONDecodeError, ValueError) as error:
@@ -78,12 +80,21 @@ def attach_citations(items: list[dict]) -> None:
         cache.update(fresh)
         write_citation_cache(cache)
     for item in items:
-        doi = normalize_doi(item["doi"]) if item.get("doi") else ""
-        record = cache.get(doi)
+        record = cache.get(citation_key(item))
         if not record:
             continue
         item["citations"] = record["count"]
         item["citations_url"] = record["url"]
+
+
+def citation_key(item: dict) -> str:
+    """DOI used to ask OpenAlex for this paper's citation count."""
+    if item.get("doi"):
+        return normalize_doi(item["doi"])
+    arxiv = str(item.get("arxiv") or "").strip()
+    if arxiv:
+        return normalize_doi(f"10.48550/arxiv.{arxiv}")
+    return ""
 
 
 def normalize_doi(doi: str) -> str:
@@ -170,6 +181,9 @@ def publication_from_entry(entry: dict) -> dict:
         item["url"] = url
     elif doi:
         item["url"] = f"https://doi.org/{doi}"
+    arxiv = arxiv_identifier(entry)
+    if arxiv:
+        item["arxiv"] = arxiv
     return item
 
 
@@ -178,16 +192,28 @@ def venue_name(entry: dict) -> str:
     published = latex_to_text(entry.get("journal") or entry.get("booktitle") or entry.get("publisher") or "")
     if published:
         return published
-    archive = latex_to_text(entry.get("archiveprefix") or "").lower()
-    eprint = latex_to_text(entry.get("eprint") or "")
-    url = latex_to_text(entry.get("url") or "")
-    if archive == "arxiv" or "arxiv.org" in url.lower():
-        identifier = eprint or arxiv_id(url)
+    identifier = arxiv_identifier(entry)
+    if identifier or is_arxiv(entry):
         return f"arXiv:{identifier}" if identifier else "arXiv"
     other = latex_to_text(entry.get("howpublished") or entry.get("note") or "")
     if other:
         return other
     raise ValueError(f"{entry['key']} needs a journal, booktitle, publisher, or arXiv id")
+
+
+def arxiv_identifier(entry: dict) -> str:
+    """arXiv id when this entry is a preprint, otherwise an empty string."""
+    if not is_arxiv(entry):
+        return ""
+    eprint = latex_to_text(entry.get("eprint") or "")
+    url = latex_to_text(entry.get("url") or "")
+    return eprint or arxiv_id(url)
+
+
+def is_arxiv(entry: dict) -> bool:
+    archive = latex_to_text(entry.get("archiveprefix") or "").lower()
+    url = latex_to_text(entry.get("url") or "").lower()
+    return archive == "arxiv" or "arxiv.org" in url
 
 
 def arxiv_id(url: str) -> str:

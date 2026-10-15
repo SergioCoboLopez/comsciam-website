@@ -12,7 +12,7 @@
   {% endif %}
 {% endfor %}
 <div class="publication-filters">
-  <button type="button" class="sort-banner" id="sort-citations" aria-pressed="false">{{ content.sort_citations | default("Citations") }}</button>
+  <button type="button" class="sort-banner" id="sort-citations" aria-pressed="false">{{ content.sort_citations | default("Sort by citations") }}</button>
   <div class="sort-menu">
     <button type="button" class="sort-banner" id="sort-date" aria-expanded="false" aria-controls="sort-date-menu">{{ content.sort_date | default("Sort by date") }}</button>
     <ul id="sort-date-menu" class="sort-menu-list" hidden>
@@ -126,6 +126,7 @@
       sortDate.setAttribute("aria-pressed", "true");
       sortCitations.setAttribute("aria-pressed", "false");
       closeDateMenu();
+      sortDate.focus();
       sortByDate(choice.dataset.order === "newest");
     });
   });

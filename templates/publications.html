@@ -12,8 +12,14 @@
   {% endif %}
 {% endfor %}
 <div class="publication-filters">
-  {# Empty room for two banners to be added later. #}
-  <div class="filter-reserve"></div>
+  <button type="button" class="sort-banner" id="sort-citations" aria-pressed="false">{{ content.sort_citations | default("Citations") }}</button>
+  <div class="sort-menu">
+    <button type="button" class="sort-banner" id="sort-date" aria-expanded="false" aria-controls="sort-date-menu">{{ content.sort_date | default("Sort by date") }}</button>
+    <ul id="sort-date-menu" class="sort-menu-list" hidden>
+      <li><button type="button" data-order="oldest">{{ content.sort_oldest | default("Oldest first") }}</button></li>
+      <li><button type="button" data-order="newest">{{ content.sort_newest | default("Newest first") }}</button></li>
+    </ul>
+  </div>
   <label class="picker">
     <select id="author-filter" aria-label="{{ content.authors_label | default('All authors') }}">
       <option value="all">{{ content.authors_label | default("All authors") }}</option>
@@ -33,7 +39,7 @@
 </div>
 <ol class="bibliography">
   {% for item in content["items"] %}
-  <li id="{{ item.id }}" data-year="{{ item.year }}" data-authors="{{ item.author_ids | join(' ') }}">
+  <li id="{{ item.id }}" data-year="{{ item.year }}" data-order="{{ loop.index0 }}" data-citations="{{ item.citations if item.citations is defined else 0 }}" data-authors="{{ item.author_ids | join(' ') }}">
     <div class="reference-main">
       <span class="year">{{ item.year }}</span>
       {{ item.authors }}.
@@ -76,5 +82,58 @@
   yearFilter.addEventListener("change", applyFilters);
   authorFilter.addEventListener("change", applyFilters);
   applyFilters();
+
+  const list = document.querySelector(".bibliography");
+  const sortCitations = document.querySelector("#sort-citations");
+  const sortDate = document.querySelector("#sort-date");
+  const sortDateMenu = document.querySelector("#sort-date-menu");
+
+  function reorder(compare) {
+    [...papers].sort(compare).forEach((paper) => list.appendChild(paper));
+  }
+
+  function closeDateMenu() {
+    sortDateMenu.hidden = true;
+    sortDate.setAttribute("aria-expanded", "false");
+  }
+
+  function sortByDate(newestFirst) {
+    reorder((a, b) => {
+      const byYear = Number(a.dataset.year) - Number(b.dataset.year);
+      return (newestFirst ? -byYear : byYear) || Number(a.dataset.order) - Number(b.dataset.order);
+    });
+  }
+
+  sortCitations.addEventListener("click", () => {
+    closeDateMenu();
+    sortDate.setAttribute("aria-pressed", "false");
+    sortDateMenu.querySelectorAll("button").forEach((choice) => choice.setAttribute("aria-pressed", "false"));
+    sortCitations.setAttribute("aria-pressed", "true");
+    reorder((a, b) => Number(b.dataset.citations) - Number(a.dataset.citations) || Number(a.dataset.order) - Number(b.dataset.order));
+  });
+
+  sortDate.addEventListener("click", () => {
+    const open = sortDate.getAttribute("aria-expanded") === "true";
+    sortDateMenu.hidden = open;
+    sortDate.setAttribute("aria-expanded", open ? "false" : "true");
+  });
+
+  sortDateMenu.querySelectorAll("button").forEach((choice) => {
+    choice.addEventListener("click", () => {
+      sortDateMenu.querySelectorAll("button").forEach((button) => {
+        button.setAttribute("aria-pressed", button === choice ? "true" : "false");
+      });
+      sortDate.setAttribute("aria-pressed", "true");
+      sortCitations.setAttribute("aria-pressed", "false");
+      closeDateMenu();
+      sortByDate(choice.dataset.order === "newest");
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!sortDate.parentElement.contains(event.target)) {
+      closeDateMenu();
+    }
+  });
 </script>
 {% endblock %}

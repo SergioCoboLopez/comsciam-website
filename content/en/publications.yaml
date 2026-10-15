@@ -6,6 +6,10 @@ heading: Publications
 citations_label: citations
 years_label: All years
 authors_label: All authors
+sort_citations: Citations
+sort_date: Sort by date
+sort_newest: Newest first
+sort_oldest: Oldest first
 intro: |
   Placeholder list. Items appear in the order written here, so put new papers at the top.
 #items:

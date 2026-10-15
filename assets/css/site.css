@@ -306,8 +306,63 @@ main h2 {
   margin: 1.5rem 0 0;
 }
 
-.filter-reserve {
-  flex: 0 0 17rem;
+.sort-banner {
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: var(--color-accent-dark);
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sort-banner[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.sort-menu {
+  position: relative;
+}
+
+.sort-menu-list {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 3;
+  min-width: 100%;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: 0.35rem;
+}
+
+.sort-menu-list button {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sort-menu-list button:hover,
+.sort-menu-list button[aria-pressed="true"] {
+  background: var(--color-surface);
 }
 
 .picker select {
@@ -444,10 +499,6 @@ main h2 {
 
   .bibliography li {
     flex-wrap: wrap;
-  }
-
-  .filter-reserve {
-    display: none;
   }
 
   .publication-filters {

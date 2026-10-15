@@ -377,6 +377,9 @@ def main() -> None:
             if layout == "publications.html":
                 # The paper list is shared. Language files only keep the translated heading.
                 content["items"] = publication_items
+                content["authors"] = [
+                    {"id": person["id"], "name": person["name"]} for person in researcher_records
+                ]
                 for item in content["items"]:
                     require_keys(item, PUBLICATION_FIELDS, f"{label} publication")
                     if not ID_RE.match(str(item["id"])):

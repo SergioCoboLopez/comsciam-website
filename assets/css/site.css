@@ -299,18 +299,18 @@ main h2 {
   color: var(--color-muted);
 }
 
-.year-filter {
-  display: block;
+.publication-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin: 1.5rem 0 0;
 }
 
-.author-filter {
-  margin: 1rem 0 0;
-  font-weight: 700;
-  color: var(--color-accent-dark);
+.filter-reserve {
+  flex: 0 0 17rem;
 }
 
-.year-filter select {
+.picker select {
   appearance: none;
   margin: 0;
   padding: 0.35rem 1.8rem 0.35rem 0.75rem;
@@ -331,7 +331,7 @@ main h2 {
   cursor: pointer;
 }
 
-.year-filter option {
+.picker option {
   background: #fff;
   color: #1c2430;
 }
@@ -443,6 +443,14 @@ main h2 {
   }
 
   .bibliography li {
+    flex-wrap: wrap;
+  }
+
+  .filter-reserve {
+    display: none;
+  }
+
+  .publication-filters {
     flex-wrap: wrap;
   }
 }

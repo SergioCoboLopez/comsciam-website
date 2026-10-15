@@ -11,15 +11,26 @@
     {% set _ = years.append(item.year) %}
   {% endif %}
 {% endfor %}
-<label class="year-filter">
-  <select id="year-filter" aria-label="{{ content.years_label | default('All years') }}">
-    <option value="all">{{ content.years_label | default("All years") }}</option>
-    {% for year in years %}
-    <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
-  </select>
-</label>
-<p id="author-filter" class="author-filter" hidden></p>
+<div class="publication-filters">
+  {# Empty room for two banners to be added later. #}
+  <div class="filter-reserve"></div>
+  <label class="picker">
+    <select id="author-filter" aria-label="{{ content.authors_label | default('All authors') }}">
+      <option value="all">{{ content.authors_label | default("All authors") }}</option>
+      {% for person in content.authors | default([]) %}
+      <option value="{{ person.id }}">{{ person.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="picker">
+    <select id="year-filter" aria-label="{{ content.years_label | default('All years') }}">
+      <option value="all">{{ content.years_label | default("All years") }}</option>
+      {% for year in years %}
+      <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+    </select>
+  </label>
+</div>
 <ol class="bibliography">
   {% for item in content["items"] %}
   <li id="{{ item.id }}" data-year="{{ item.year }}" data-authors="{{ item.author_ids | join(' ') }}">
@@ -44,28 +55,26 @@
 </ol>
 <script>
   const yearFilter = document.querySelector("#year-filter");
+  const authorFilter = document.querySelector("#author-filter");
   const papers = document.querySelectorAll(".bibliography li");
-  const params = new URLSearchParams(window.location.search);
-  const authorId = params.get("author");
-  const authorNote = document.querySelector("#author-filter");
-  if (authorNote && authorId && params.get("name")) {
-    authorNote.textContent = params.get("name");
+  const authorId = new URLSearchParams(window.location.search).get("author");
+  if (authorId && authorFilter.querySelector(`option[value="${authorId}"]`)) {
+    authorFilter.value = authorId;
   }
 
   function applyFilters() {
     const year = yearFilter.value;
+    const author = authorFilter.value;
     papers.forEach((paper) => {
       const yearOk = year === "all" || paper.dataset.year === year;
       const authors = (paper.dataset.authors || "").split(/\s+/).filter(Boolean);
-      const authorOk = !authorId || authors.includes(authorId);
+      const authorOk = author === "all" || authors.includes(author);
       paper.hidden = !(yearOk && authorOk);
     });
-    if (authorNote) {
-      authorNote.hidden = !authorId;
-    }
   }
 
   yearFilter.addEventListener("change", applyFilters);
+  authorFilter.addEventListener("change", applyFilters);
   applyFilters();
 </script>
 {% endblock %}

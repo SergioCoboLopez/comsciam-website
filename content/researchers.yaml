@@ -15,17 +15,25 @@ people:
     bio: ""
     photo: assets/images/person.svg
   - id: persona-2
-    name: Roger Guimerà
+    name: Jordi Duch Gavaldà
     role: ip
     email: persona.2@urv.cat
-    lab: "Seeslab"
-    lab_url: https://seeslab.info/
+    lab: "Alephsys"
+    lab_url: https://alephsyslab.com/
     bio: ""
     photo: assets/images/person.svg
   - id: persona-3
     name: Marta Sales-Pardo
     role: ip
     email: persona.3@urv.cat
+    lab: "Seeslab"
+    lab_url: https://seeslab.info/
+    bio: ""
+    photo: assets/images/person.svg
+    -id: persona-4
+    name: Roger Guimerà
+    role: ip
+    email: persona.2@urv.cat
     lab: "Seeslab"
     lab_url: https://seeslab.info/
     bio: ""

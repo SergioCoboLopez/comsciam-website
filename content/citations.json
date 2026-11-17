@@ -4,19 +4,19 @@
     "url": "https://openalex.org/works?filter=cites:W7171626840"
   },
   "10.1038/s41467-024-51651-9": {
-    "count": 50,
+    "count": 71,
     "url": "https://openalex.org/works?filter=cites:W4401945686"
   },
   "10.1088/1367-2630/aaaf87": {
-    "count": 4,
+    "count": 5,
     "url": "https://openalex.org/works?filter=cites:W2769552378"
   },
   "10.1093/pnasnexus/pgac055": {
-    "count": 17,
+    "count": 21,
     "url": "https://openalex.org/works?filter=cites:W4281287667"
   },
   "10.1103/physrevb.94.224507": {
-    "count": 28,
+    "count": 31,
     "url": "https://openalex.org/works?filter=cites:W2515502341"
   },
   "10.1140/epjds/s13688-018-0175-3": {
@@ -24,11 +24,11 @@
     "url": "https://openalex.org/works?filter=cites:W2900726420"
   },
   "10.1140/epjds/s13688-021-00280-z": {
-    "count": 7,
+    "count": 8,
     "url": "https://openalex.org/works?filter=cites:W3133887081"
   },
   "10.48550/arxiv.2511.14388": {
-    "count": 0,
+    "count": 1,
     "url": "https://openalex.org/works?filter=cites:W7106131996"
   }
 }

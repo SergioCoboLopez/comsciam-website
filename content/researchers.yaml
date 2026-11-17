@@ -30,7 +30,7 @@ people:
     lab_url: https://seeslab.info/
     bio: ""
     photo: assets/images/person.svg
-    -id: persona-4
+  - id: persona-4
     name: Roger Guimerà
     role: ip
     email: persona.2@urv.cat

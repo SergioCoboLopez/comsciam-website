@@ -257,11 +257,17 @@ def author_signatures(value: str) -> list[str]:
 
 
 def name_tokens(value: str) -> set[str]:
-    """Lower case, without accents or hyphens, so Cobo-López and Cobo-Lopez match."""
+    """Lower case, without accents or hyphens, so Cobo-López and Cobo-Lopez match.
+
+    OpenAlex uses the Unicode hyphen (U+2010) in names such as Sales‐Pardo.
+    The member list uses the ordinary hyphen. Both have to split the same way.
+    """
     text = latex_to_text(value)
     text = unicodedata.normalize("NFKD", text)
     text = "".join(character for character in text if not unicodedata.combining(character))
-    text = text.lower().replace("-", " ").replace(",", " ").replace(".", " ")
+    text = text.lower()
+    text = re.sub(r"[\u00ad\u2010\u2011\u2012\u2013\u2014\u2212-]", " ", text)
+    text = text.replace(",", " ").replace(".", " ")
     return {token for token in text.split() if token}
 
 

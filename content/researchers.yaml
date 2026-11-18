@@ -4,10 +4,12 @@
 # Leave lab, lab_url, or bio empty to hide that line.
 # An empty bio is shown as a short placeholder paragraph.
 # The publications link is added automatically when this name appears in content/publications.bib.
+# orcid is the full https://orcid.org/... address. fetch_publications.py uses it to find papers.
 
 people:
   - id: persona-1
     name: Sergio Cobo-López
+    orcid: "https://orcid.org/0000-0002-1089-6205"
     role: postdoc
     email: persona.1@urv.cat
     lab: Seeslab
@@ -16,6 +18,7 @@ people:
     photo: assets/images/person.svg
   - id: persona-2
     name: Jordi Duch Gavaldà
+    orcid: "https://orcid.org/0000-0003-2639-6333"
     role: ip
     email: persona.2@urv.cat
     lab: "Alephsys"
@@ -24,6 +27,7 @@ people:
     photo: assets/images/person.svg
   - id: persona-3
     name: Marta Sales-Pardo
+    orcid: "https://orcid.org/0000-0002-8140-6525"
     role: ip
     email: persona.3@urv.cat
     lab: "Seeslab"
@@ -32,6 +36,7 @@ people:
     photo: assets/images/person.svg
   - id: persona-4
     name: Roger Guimerà
+    orcid: "https://orcid.org/0000-0002-3597-4310"
     role: ip
     email: persona.2@urv.cat
     lab: "Seeslab"

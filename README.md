@@ -64,9 +64,21 @@ Add a block under `people` in `content/researchers.yaml`. The same list is used 
 
 `role` is one of `ip`, `researcher`, `postdoc`, or `phd`. The words shown on the page are `roles` in `content/ca/researchers.yaml` and the English and Spanish copies. Leave `lab` or `lab_url` empty to hide that line. An empty `bio` is replaced by a short placeholder paragraph. The publications link is added when the person's name appears among the authors in `content/publications.bib`, and it opens only that person's papers. Photos are optional; the default image is `assets/images/person.svg`.
 
+## Fetch publications
+
+Each person in `content/researchers.yaml` can have an `orcid` line, the full `https://orcid.org/...` address. This command asks OpenAlex for those authors' works and appends the new ones to `content/publications.bib`. A paper already in the file, matched by DOI or arXiv id, is left unchanged.
+
+```bash
+python3 scripts/fetch_publications.py --period last-five-years
+python3 scripts/update_publications.py
+python3 build.py
+```
+
+`--period` is `always`, `this-year`, `last-year`, or `last-five-years`. The five-year period is this calendar year and the four years before it. Add `--dry-run` to see the report without writing the file. Someone without an `orcid` is skipped. An arXiv preprint is written with its arXiv id, as the hand-written entries are. A journal article that also has an arXiv copy is written as the journal article.
+
 ## Add a publication
 
-Add the paper to `content/publications.bib`. The same list is used in Catalan, English, and Spanish. The language files only keep the page title and introduction.
+Add the paper to `content/publications.bib` by hand, or use the fetch command above. The same list is used in Catalan, English, and Spanish. The language files only keep the page title and introduction.
 
 ```bash
 python3 scripts/update_publications.py

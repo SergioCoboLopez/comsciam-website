@@ -56,7 +56,10 @@ pages:
   - id: publications
     path: publications
     layout: publications.html
-
+  - id: transfer
+    path: transfer
+    layout: simple.html
+    
   # A later text section only needs a block like this, plus one YAML file
   # per language (title, meta_description, heading, intro, optional sections):
   # - id: contact

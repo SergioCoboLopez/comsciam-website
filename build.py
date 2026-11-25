@@ -65,10 +65,10 @@ REQUIRED_BY_LAYOUT = {
     "meta_description",
     "heading",
     "intro",
-    "why_heading",
-    "why_text",
     "how_heading",
-    "how_text",],
+    "how_text",
+    "subscriptions_heading",
+    "subscriptions_text",],
     "simple.html": ["title", "meta_description", "heading", "intro"],
 }
 

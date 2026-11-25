@@ -5,11 +5,11 @@
   {{ content.intro | paragraphs }}
 </div>
 <section class="subsection">
-  <h2 id="why">{{ content.why_heading }}</h2>
-  {{ content.why_text | paragraphs }}
-</section>
-<section class="subsection">
   <h2 id="how">{{ content.how_heading }}</h2>
   {{ content.how_text | paragraphs }}
+</section>
+<section class="subsection">
+  <h2 id="subscriptions">{{ content.subscriptions_heading }}</h2>
+  {{ content.subscriptions_text | paragraphs }}
 </section>
 {% endblock %}

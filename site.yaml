@@ -60,10 +60,10 @@ pages:
     path: transfer
     layout: transfer.html
     children:
-      - id: why
-        anchor: why
       - id: how
         anchor: how
+      - id: subscriptions
+        anchor: subscriptions
     
   # A later text section only needs a block like this, plus one YAML file
   # per language (title, meta_description, heading, intro, optional sections):

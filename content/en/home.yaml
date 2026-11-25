@@ -8,8 +8,8 @@ intro: |
   This text is a placeholder. Use a few sentences to say what the group studies, which faculty it belongs to, and why the work matters.
 
   A blank line starts a new paragraph. The page layout stays the same.
-areas_heading: Research lines
-areas:
+lines_heading: Research lines
+lines:
   - title: First research line
     text: Short placeholder description. Replace it with a real line of work.
   - title: Second research line

@@ -48,8 +48,8 @@ REQUIRED_BY_LAYOUT = {
         "heading",
         "tagline",
         "intro",
-        "areas_heading",
-        "areas",
+        "lines_heading",
+        "lines",
     ],
     "researchers.html": [
         "title",
@@ -60,6 +60,15 @@ REQUIRED_BY_LAYOUT = {
         "publications_label",
     ],
     "publications.html": ["title", "meta_description", "heading", "intro"],
+    "transfer.html": [
+    "title",
+    "meta_description",
+    "heading",
+    "intro",
+    "why_heading",
+    "why_text",
+    "how_heading",
+    "how_text",],
     "simple.html": ["title", "meta_description", "heading", "intro"],
 }
 
@@ -370,8 +379,8 @@ def main() -> None:
                 fail(f"no required-field list for layout {layout}")
             require_keys(content, REQUIRED_BY_LAYOUT[layout], label)
             if layout == "home.html":
-                for index, area in enumerate(content["areas"], start=1):
-                    require_keys(area, AREA_FIELDS, f"{label} area {index}")
+                for index, line in enumerate(content["lines"], start=1):
+                    require_keys(line, AREA_FIELDS, f"{label} line {index}")
             if layout == "researchers.html":
                 content["people"] = people_for_language(researcher_records, content["roles"], label)
             if layout == "publications.html":
@@ -405,12 +414,12 @@ def main() -> None:
             "publications",
         )
     if "home" in page_id_set:
-        area_counts = [
-            (lang_id, len(bundle["pages"]["home"]["areas"]))
+        line_counts = [
+            (lang_id, len(bundle["pages"]["home"]["lines"]))
             for lang_id, bundle in loaded.items()
         ]
-        if len({count for _, count in area_counts}) != 1:
-            fail(f"home research lines differ by language: {area_counts}")
+        if len({count for _, count in line_counts}) != 1:
+            fail(f"home research lines differ by language: {line_counts}")
 
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)

@@ -7,13 +7,13 @@
   {{ content.intro | paragraphs }}
 </div>
 {# id matches children[].anchor for this block in site.yaml. #}
-<h2 id="research-lines">{{ content.areas_heading }}</h2>
-<ul class="area-list">
-  {% for area in content.areas %}
+<h2 id="research-lines">{{ content.lines_heading }}</h2>
+<ul class="line-list">
+  {% for line in content.lines %}
   <li>
     <div>
-      <h3>{{ area.title }}</h3>
-      <p>{{ area.text }}</p>
+      <h3>{{ line.title }}</h3>
+      <p>{{ line.text }}</p>
     </div>
   </li>
   {% endfor %}

@@ -58,7 +58,12 @@ pages:
     layout: publications.html
   - id: transfer
     path: transfer
-    layout: simple.html
+    layout: transfer.html
+    children:
+      - id: why
+        anchor: why
+      - id: how
+        anchor: how
     
   # A later text section only needs a block like this, plus one YAML file
   # per language (title, meta_description, heading, intro, optional sections):

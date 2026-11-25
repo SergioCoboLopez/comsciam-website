@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block main %}
+<h1>{{ content.heading }}</h1>
+<div class="prose">
+  {{ content.intro | paragraphs }}
+</div>
+<section class="subsection">
+  <h2 id="why">{{ content.why_heading }}</h2>
+  {{ content.why_text | paragraphs }}
+</section>
+<section class="subsection">
+  <h2 id="how">{{ content.how_heading }}</h2>
+  {{ content.how_text | paragraphs }}
+</section>
+{% endblock %}
